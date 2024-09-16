@@ -1,6 +1,6 @@
 You will need to have the latest version of Node.js installed on your machine to run the app. Please refer to this guide on installing Node.js if you need a reference: https://nodejs.org/en/download/package-manager#macos
 
-All Blue (dev) utilizes OIDC and the identity token provided to access user information on API v3.0. You will need to create a new Clever dev app, here: https://apps.clever.com/signup
+All Blue (dev) utilizes OIDC and the identity token provided to access user information on API v3.0. You will need to create a new Clever dev app, here, https://apps.clever.com/signup. You will need to reach out to integrations@clever.com to have OIDC scopes applied to your dev account.
 
 How to run the app:
 
