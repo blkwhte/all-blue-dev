@@ -29,8 +29,8 @@ Before running the app, ensure the following are set up:
 ### **How to Use**
 1. **Clone the Repository**:
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/blkwhte/all-blue-dev.git
+   cd ./all-blue-dev
 2. **Install Dependencies (if applicable): If your project has dependencies (e.g., express, axios), install them:
 ```bash
 npm install
