@@ -1,14 +1,65 @@
-You will need to have the latest version of Node.js installed on your machine to run the app. Please refer to this guide on installing Node.js if you need a reference: https://nodejs.org/en/download/package-manager#macos
+All Blue (Dev)
+Project Overview
+All Blue (Dev) is a demonstration app that utilizes OIDC to authenticate users via Clever and access user details through Clever's API v3.0. The app showcases how to implement authentication flows and retrieve user information from the identity token.
 
-All Blue (dev) utilizes OIDC and the identity token provided to access user information on API v3.0. You will need to create a new Clever dev app, here, https://apps.clever.com/signup. You will need to reach out to integrations@clever.com to have OIDC scopes applied to your dev account.
+Prerequisites
+Before running the app, ensure the following are set up:
 
-How to run the app:
+Node.js Installation:
 
-  1. Clone the Github Repo
-  2. Create a .env file and include the following variables: CLEVER_CLIENT_ID, CLEVER_CLIENT_SECRET, REDIRECT_URI_ and a SESSION_SECRET
-  4. Run the command "node index.js" in your terminal while in the file location of the repo
-  5. Navigate to "localhost:3000" in your web browser of choice
-  6. Select the "Log in with Clever" button on the site
-  7. When prompted with the School Picker, enter the district ID 63e42be9ea7d85c10c19ebe5 (#DEMO All Blue (dev))
-  8. When prompted to log in, select the Clever Passwords login and enter 243615677 for the username and password
-  9. You should be redirected back to the All Blue (localhost) site with a message confirming the authentication was successful.
+Install the latest version of Node.js for your operating system: Node.js Installation Guide.
+Clever Developer App:
+
+Create a Clever Developer App: Clever Developer Portal.
+Contact Clever at integrations@clever.com to request OIDC scopes for your developer account.
+Environment Variables:
+
+Create a .env file in the project directory with the following variables:
+makefile
+Copy
+Edit
+CLEVER_CLIENT_ID=<your_client_id>
+CLEVER_CLIENT_SECRET=<your_client_secret>
+REDIRECT_URI=<your_redirect_uri>
+SESSION_SECRET=<your_session_secret>
+How to Use
+Clone the Repository:
+
+bash
+Copy
+Edit
+git clone <repository-url>
+cd <repository-folder>
+Install Dependencies (if applicable): If your project has dependencies (e.g., express, axios), install them:
+
+bash
+Copy
+Edit
+npm install
+Start the Application: Run the app using Node.js:
+
+bash
+Copy
+Edit
+node index.js
+Access the App:
+
+Open your browser and navigate to https://localhost:3000.
+Click the "Log in with Clever" button to start the authentication flow.
+Testing the App
+When prompted with the School Picker, enter:
+
+mathematica
+Copy
+Edit
+District ID: 63e42be9ea7d85c10c19ebe5 (#DEMO All Blue (Dev))
+Log in with Clever Passwords:
+
+Username: 243615677
+Password: 243615677
+After successful authentication:
+
+You should be redirected back to the app's home page (https://localhost:3000/home) with a confirmation message and user details displayed.
+Additional Notes
+Ensure the .env variables are correctly configured before running the app.
+The app is designed for local development and testing purposes. Use self-signed SSL certificates for HTTPS.
