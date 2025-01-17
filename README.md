@@ -30,17 +30,18 @@ Before running the app, ensure the following are set up:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/blkwhte/all-blue-dev.git
-   cd ./all-blue-dev
-2. **Install Dependencies (if applicable): If your project has dependencies (e.g., express, axios), install them:
+   ```
+   
+2. **Install Dependencies (if applicable): If your project has dependencies (e.g., express, axios), install them:**
 ```bash
 npm install
 ```
-3. **Start the Application: Run the app using Node.js:
+3. **Start the Application: Run the app using Node.js:**
 
 ```bash
 node index.js
 ```
-4. **Access the App:
+4. **Access the App:**
 
    - Open your browser and navigate to https://localhost:3000.
    - Click the "Log in with Clever" button to start the authentication flow.
@@ -51,7 +52,7 @@ node index.js
       - Username: 243615677
       - Password: 243615677
 
-5. **After successful authentication:
+5. **After successful authentication:**
 
 You should be redirected back to the app's home page (https://localhost:3000/home) with a confirmation message and user details displayed.
 
