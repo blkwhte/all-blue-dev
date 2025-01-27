@@ -1,63 +1,64 @@
 require('dotenv').config();
-const fs = require('fs');
-const axios = require('axios');
-const express = require('express');
-const path = require('path');
-const jwt_decode = require('jwt-decode');
-const session = require('express-session');
-const pug = require('pug');
 
-// Initialize Express
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const pug = require('pug');
+const axios = require('axios');
+const jwt_decode = require('jwt-decode');
+
 const app = express();
 
-// Serve static files from the 'public' folder
-app.use(express.static(path.join(__dirname, '../public')));
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET);
 
-// Session middleware
-const oneDay = 1000 * 60 * 60 * 24;
-
+// Session middleware configuration (using MemoryStore by default)
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET, // A strong secret for sessions
+  saveUninitialized: false, // Don't save empty sessions
+  resave: false, // Don't resave unchanged sessions
   cookie: { 
-    maxAge: oneDay,
-    path: '/',
-    sameSite: 'None',
-    secure: true,     
-    httpOnly: true     
+    maxAge: 1000 * 60 * 60 * 24, // 1-day session duration
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Set 'None' for cross-origin cookies in production
+    secure: process.env.NODE_ENV === 'production', // Only use HTTPS in production
   },
-  resave: false,
 }));
 
+// Middleware to parse incoming requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from 'public' folder
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Set views directory and engine for Pug
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// Root route
+// Root route (index page)
 app.get('/', (req, res) => {
+  console.log('Session before redirect:', req.session);  // Log session state before redirect
   res.render('index', { title: 'All Blue - Dev' });
 });
 
 // Home route
 app.get('/home', (req, res) => {
-  console.log('Session on /home:', req.session);
+  console.log('Session on /home:', req.session);  // Debugging session data
   if (req.session.user) {
     res.render('home', { title: 'All Blue - Home', user: req.session.user });
   } else {
-    res.redirect('/');  // Redirect to login page if no user data
+    console.log('No user session found, redirecting to login');
+    res.redirect('/');  // Redirect to login page if no user session
   }
 });
 
-// Redirect to Clever authorization
+// Redirect to Clever OAuth authorization
 app.get('/auth', (req, res) => {
   res.redirect(
     `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${process.env.REDIRECT_URI}&client_id=${process.env.CLEVER_CLIENT_ID}`
   );
 });
 
-// Clever OAuth callback
+// Handle OAuth callback
 app.get('/auth/clever', (req, res) => {
   const { code } = req.query;
 
@@ -77,6 +78,7 @@ app.get('/auth/clever', (req, res) => {
     .then((token) => {
       const decoded = jwt_decode(token);
 
+      // Store user data in session
       req.session.user = {
         firstName: decoded.given_name,
         lastName: decoded.family_name,
@@ -85,7 +87,7 @@ app.get('/auth/clever', (req, res) => {
         email: decoded.email,
       };
 
-      console.log('User session:', req.session.user);
+      console.log('User session:', req.session.user);  // Debug user session
       res.redirect('/home');
     })
     .catch((err) => {
@@ -94,7 +96,7 @@ app.get('/auth/clever', (req, res) => {
     });
 });
 
-// Logout route
+// Logout route (destroy session)
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -106,36 +108,9 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Debug route
-app.get('/debug', (req, res) => {
-  res.json({
-    session: req.session,
-    env: process.env.NODE_ENV,
-    userAgent: req.headers['user-agent'],
-  });
+app.listen(3000, () => {
+  console.log("App is listening on http://localhost:3000");
 });
 
-// Check if running locally and create HTTPS server for local testing
-if (process.env.NODE_ENV === 'development') {
-  // Local development (HTTPS) server
-  const privateKey = fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8');
-  const certificate = fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8');
-  const credentials = { key: privateKey, cert: certificate };
-
-  // Start the HTTPS server for local testing
-  require('https').createServer(credentials, app).listen(3000, () => {
-    console.log('App listening on https://localhost:3000');
-  });
-} else {
-  // In production (serverless on Vercel), just export the app
-  module.exports = (req, res) => {
-    res.setHeader('Content-Type', 'text/html');
-  
-    // Render the Pug template (index.pug) from the views folder
-    const html = pug.renderFile(path.join(__dirname, 'views', 'index.pug'), {
-      title: 'All Blue - Home',
-    });
-  
-    res.status(200).send(html);
-  };
-}
+// Export the app for serverless functions (Vercel deployment)
+// module.exports = app;
